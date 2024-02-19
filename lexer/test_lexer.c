@@ -56,17 +56,18 @@ void Test_Next_Token() {
   lex_lexer *lexer = lex_lexer_new(input);
   for (int i = 0; i < 76; i++) {
     tk_token token = lex_next_token(lexer);
-    if (token.tk_type != tst[i].expected_type) {
-      printf(RED "Wrong token type. expected = %s but got = %s\n" RESET,
+    if (strcmp(token.tk_type, tst[i].expected_type)!=0) {
+      printf(RED "Wrong token type! expected = %s but got = %s\n" RESET,
              tst[i].expected_type, token.tk_type);
       errors++;
     }
 
-    if (token.literal != tst[i].expected_literal) {
-      printf(RED "Wrong literal type. expected = %s but got = %s\n" RESET,
+    if (strcmp(token.literal, tst[i].expected_literal)!=0) {
+      printf(RED "Wrong literal type! expected = %s but got = %s\n" RESET,
              tst[i].expected_literal, token.literal);
       errors++;
     }
+
   }
   free(lexer);
 }

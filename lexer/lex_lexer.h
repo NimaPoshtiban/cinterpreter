@@ -3,6 +3,7 @@
 
 #endif // !LEX_LEXER_Hj
 #include "../token/tk_token.h"
+#include <stdbool.h>
 typedef struct {
   char *input;
   int position;      // current position in input (points to current char)

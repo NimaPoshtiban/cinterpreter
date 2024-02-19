@@ -10,10 +10,11 @@ bool lex_is_letter(char ch) {
 
 bool lex_is_digit(char ch) { return ('0' <= ch && ch <= '9'); }
 
-tk_token lex_new_token(tk_token_type token_type, char ch) {
+tk_token lex_new_token(tk_token_type token_type, char* ch) {
   tk_token token;
   token.tk_type = token_type;
-  token.literal = (char *)ch;
+  
+  token.literal = ch;
   return token;
 }
 
@@ -29,10 +30,12 @@ void lex_read_char(lex_lexer *lexer) {
 
 char *lex_read_string(lex_lexer *lexer) {
   int position = lexer->position + 1;
+  int size = 0;
   while (!(lexer->ch == '"' || lexer->ch == 0)) {
     lex_read_char(lexer);
+    size++;
   }
-  char *result = malloc(sizeof(char) * strlen(lexer->input));
+  char* result = malloc((sizeof(char) * size) + 1);
   memcpy(result, lexer->input + position, lexer->position);
   result[strlen(lexer->input) - 1] = '\0';
   return result;
@@ -40,11 +43,13 @@ char *lex_read_string(lex_lexer *lexer) {
 
 char *lex_read_number(lex_lexer *lexer) {
   int position = lexer->position;
+  int size = 0;
   while (lex_is_digit(lexer->ch)) {
     lex_read_char(lexer);
+    size++;
   }
 
-  char *result = malloc(sizeof(char) * strlen(lexer->input));
+  char* result = malloc((sizeof(char) * size) + 1);
   memcpy(result, lexer->input + position, lexer->position);
   result[strlen(lexer->input) - 1] = '\0';
   return result;
@@ -66,18 +71,23 @@ char lex_peek_char(lex_lexer *lexer) {
 
 char *lex_read_identifier(lex_lexer *lexer) {
   int position = lexer->position;
-  while (lex_is_letter(lexer->ch))
-    lex_read_char(lexer);
-
-  char *result = malloc(sizeof(char) * strlen(lexer->input));
+  int size = 0;
+  while (lex_is_letter(lexer->ch)) {
+      lex_read_char(lexer);
+      size++;
+  }
+  char *result = malloc((sizeof(char) *size)+1);
   memcpy(result, lexer->input + position, lexer->position);
-  result[strlen(lexer->input) - 1] = '\0';
+  result[size] = '\0';
   return result;
 }
 
 lex_lexer *lex_lexer_new(char *input) {
   lex_lexer *lexer = malloc(sizeof(lex_lexer));
+  lexer->input = malloc(sizeof(input));
   lexer->input = input;
+  lexer->position = NULL;
+  lexer->read_position = NULL;
   lex_read_char(lexer);
   return lexer;
 }
@@ -96,7 +106,8 @@ tk_token lex_next_token(lex_lexer *lexer) {
       token.tk_type = TK_EQ;
       token.literal = literal;
     } else {
-      token = lex_new_token(TK_ASSIGN, lexer->ch);
+        char literal[2] = { lexer->ch,'\0' };
+      token = lex_new_token(TK_ASSIGN, literal);
     }
     break;
   case '-':
