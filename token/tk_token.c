@@ -1,15 +1,14 @@
 
 #include "tk_token.h"
 #include "tk_const.h"
-// TODO implement this function
+
 tk_token_type tk_lookup_ident(hashmap *map, char *ident) {
-  if (hashmap_find(map , ident) != 0) {
+  if (hashmap_find(map, ident) != 0) {
     return ident;
   }
   return TK_IDENT;
 }
 
-// TODO add tk_keywords hashmap
 hashmap *tk_keywords(void) {
   hashmap *map = hashmap_create();
   hashmap_add(map, "func", TK_FUNCTION);

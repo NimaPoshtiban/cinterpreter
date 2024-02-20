@@ -54,22 +54,21 @@ void Test_Next_Token() {
       {TK_EOF, ""},
   };
   lex_lexer *lexer = lex_lexer_new(input);
+  hashmap *map = tk_keywords();
   for (int i = 0; i < 76; i++) {
-    tk_token token = lex_next_token(lexer);
-    if (strcmp(token.tk_type, tst[i].expected_type)!=0) {
+    tk_token token = lex_next_token(lexer, map);
+    if (strcmp(token.tk_type, tst[i].expected_type) != 0) {
       printf(RED "Wrong token type! expected = %s but got = %s\n" RESET,
              tst[i].expected_type, token.tk_type);
       errors++;
     }
 
-    if (strcmp(token.literal, tst[i].expected_literal)!=0) {
+    if (strcmp(token.literal, tst[i].expected_literal) != 0) {
       printf(RED "Wrong literal type! expected = %s but got = %s\n" RESET,
              tst[i].expected_literal, token.literal);
       errors++;
     }
-
   }
-  free(lexer);
 }
 
 int main() {

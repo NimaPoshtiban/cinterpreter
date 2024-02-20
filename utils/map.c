@@ -43,7 +43,7 @@ char* hashmap_find(hashmap* hashmap, const char* key) {
 }
 
 hashmap* hashmap_create(void){
-hashmap* map = malloc(sizeof(hashmap));
+    hashmap* map = malloc(sizeof(hashmap));
     if (map != NULL) {
     memset(map, 0, sizeof(hashmap));
     }

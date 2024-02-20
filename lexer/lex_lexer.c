@@ -10,10 +10,10 @@ bool lex_is_letter(char ch) {
 
 bool lex_is_digit(char ch) { return ('0' <= ch && ch <= '9'); }
 
-tk_token lex_new_token(tk_token_type token_type, char* ch) {
+tk_token lex_new_token(tk_token_type token_type, char *ch) {
   tk_token token;
   token.tk_type = token_type;
-  
+
   token.literal = ch;
   return token;
 }
@@ -31,13 +31,13 @@ void lex_read_char(lex_lexer *lexer) {
 char *lex_read_string(lex_lexer *lexer) {
   int position = lexer->position + 1;
   int size = 0;
-  while (!(lexer->ch == '"' || lexer->ch == 0)) {
+  do {
     lex_read_char(lexer);
     size++;
-  }
-  char* result = malloc((sizeof(char) * size) + 1);
-  memcpy(result, lexer->input + position, lexer->position);
-  result[strlen(lexer->input) - 1] = '\0';
+  } while (!(lexer->ch == '"' || lexer->ch == 0));
+  char *result = malloc((sizeof(char) * (--size)));
+  memcpy(result, lexer->input + position, lexer->position - 1);
+  result[size] = '\0';
   return result;
 }
 
@@ -49,9 +49,9 @@ char *lex_read_number(lex_lexer *lexer) {
     size++;
   }
 
-  char* result = malloc((sizeof(char) * size) + 1);
-  memcpy(result, lexer->input + position, lexer->position);
-  result[strlen(lexer->input) - 1] = '\0';
+  char *result = malloc((sizeof(char)) * size + 1);
+  memcpy(result, lexer->input + position, size);
+  result[size] = '\0';
   return result;
 }
 
@@ -73,11 +73,11 @@ char *lex_read_identifier(lex_lexer *lexer) {
   int position = lexer->position;
   int size = 0;
   while (lex_is_letter(lexer->ch)) {
-      lex_read_char(lexer);
-      size++;
+    lex_read_char(lexer);
+    size++;
   }
-  char *result = malloc((sizeof(char) *size)+1);
-  memcpy(result, lexer->input + position, lexer->position);
+  char *result = malloc((sizeof(char) * size) + 1);
+  memcpy(result, lexer->input + position, size);
   result[size] = '\0';
   return result;
 }
@@ -86,15 +86,14 @@ lex_lexer *lex_lexer_new(char *input) {
   lex_lexer *lexer = malloc(sizeof(lex_lexer));
   lexer->input = malloc(sizeof(input));
   lexer->input = input;
-  lexer->position = NULL;
-  lexer->read_position = NULL;
+  lexer->position = 0;
+  lexer->read_position = 0;
   lex_read_char(lexer);
   return lexer;
 }
 
-tk_token lex_next_token(lex_lexer *lexer) {
-  tk_token token ;
-
+tk_token lex_next_token(lex_lexer *lexer, hashmap *map) {
+  tk_token token;
   lex_skip_whitespace(lexer);
 
   switch (lexer->ch) {
@@ -106,13 +105,14 @@ tk_token lex_next_token(lex_lexer *lexer) {
       token.tk_type = TK_EQ;
       token.literal = literal;
     } else {
-        char literal[2] = { lexer->ch,'\0' };
+      char literal[2] = {lexer->ch, '\0'};
       token = lex_new_token(TK_ASSIGN, literal);
     }
     break;
-  case '-':
-    token = lex_new_token(TK_MINUS, lexer->ch);
-    break;
+  case '-': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_MINUS, literal);
+  } break;
   case '!':
     if (lex_peek_char(lexer) == '=') {
       char ch = lexer->ch;
@@ -121,55 +121,71 @@ tk_token lex_next_token(lex_lexer *lexer) {
       token.tk_type = TK_NOT_EQ;
       token.literal = literal;
     } else {
-      token = lex_new_token(TK_BANG, lexer->ch);
+      char literal[2] = {lexer->ch, '\0'};
+      token = lex_new_token(TK_BANG, literal);
     }
     break;
-  case '*':
-    token = lex_new_token(TK_ASTERISK, lexer->ch);
+  case '*': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_ASTERISK, literal);
+  } break;
+  case '/': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_SLASH, literal);
+  } break;
+  case '<': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_LT, literal);
+  } break;
+  case '>': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_GT, literal);
+  } break;
+  case ';': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_SEMICOLON, literal);
+  } break;
+  case '(': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_LPAREN, literal);
+  } break;
+  case ')': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_RPAREN, literal);
+  } break;
+  case ',': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_COMMA, literal);
+  } break;
+  case '+': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_PLUS, literal);
+  } break;
+  case '{': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_LBRACE, literal);
+  } break;
+  case '}': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_RBRACE, literal);
+  } break;
+  case '[': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_LBRACKET, literal);
     break;
-  case '/':
-    token = lex_new_token(TK_SLASH, lexer->ch);
-    break;
-  case '<':
-    token = lex_new_token(TK_LT, lexer->ch);
-    break;
-  case '>':
-    token = lex_new_token(TK_GT, lexer->ch);
-    break;
-  case ';':
-    token = lex_new_token(TK_SEMICOLON, lexer->ch);
-    break;
-  case '(':
-    token = lex_new_token(TK_LPAREN, lexer->ch);
-    break;
-  case ')':
-    token = lex_new_token(TK_RPAREN, lexer->ch);
-    break;
-  case ',':
-    token = lex_new_token(TK_COMMA, lexer->ch);
-    break;
-  case '+':
-    token = lex_new_token(TK_PLUS, lexer->ch);
-    break;
-  case '{':
-    token = lex_new_token(TK_LBRACE, lexer->ch);
-    break;
-  case '}':
-    token = lex_new_token(TK_RBRACE, lexer->ch);
-    break;
-  case '[':
-    token = lex_new_token(TK_LBRACKET, lexer->ch);
-    break;
-  case ']':
-    token = lex_new_token(TK_RBRACKET, lexer->ch);
-    break;
-  case '"':
+  }
+  case ']': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_RBRACKET, literal);
+  } break;
+  case '"': {
     token.tk_type = TK_STRING;
     token.literal = lex_read_string(lexer);
-    break;
-  case ':':
-    token = lex_new_token(TK_COLON, lexer->ch);
-    break;
+  } break;
+  case ':': {
+    char literal[2] = {lexer->ch, '\0'};
+    token = lex_new_token(TK_COLON, literal);
+  } break;
   case 0:
     token.tk_type = TK_EOF;
     token.literal = "";
@@ -177,14 +193,15 @@ tk_token lex_next_token(lex_lexer *lexer) {
   default:
     if (lex_is_letter(lexer->ch)) {
       token.literal = lex_read_identifier(lexer);
-      token.tk_type = tk_lookup_ident(tk_keywords(), token.literal);
+      token.tk_type = tk_lookup_ident(map, token.literal);
       return token;
     } else if (lex_is_digit(lexer->ch)) {
       token.tk_type = TK_INT;
       token.literal = lex_read_number(lexer);
       return token;
     } else {
-      token = lex_new_token(TK_ILLEGAL, lexer->ch);
+      char literal[2] = {lexer->ch, '\0'};
+      token = lex_new_token(TK_ILLEGAL, literal);
     }
   }
   lex_read_char(lexer);

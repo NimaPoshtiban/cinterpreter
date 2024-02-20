@@ -14,7 +14,7 @@ typedef struct {
 // isLetter checks if identifier has a valid name
 bool lex_is_letter(char ch);
 bool lex_is_digit(char ch);
-tk_token lex_new_token(tk_token_type token_type, char ch);
+tk_token lex_new_token(tk_token_type token_type, char *ch);
 char *lex_read_string(lex_lexer *lexer);
 char *lex_read_number(lex_lexer *lexer);
 void lex_skip_whitespace(lex_lexer *lexer);
@@ -32,5 +32,5 @@ char *lex_read_identifier(lex_lexer *lexer);
 //
 // The function does not take any parameters.
 // It returns a tk_token struct representing the next token.
-tk_token lex_next_token(lex_lexer *lexer);
+tk_token lex_next_token(lex_lexer *lexer, hashmap *map);
 lex_lexer *lex_lexer_new(char *input);
