@@ -8,7 +8,7 @@ file(GLOB_RECURSE lexer lexer/lex_lexer.c)
 file(GLOB_RECURSE repl repl/*.c)
 
 
-set(SOURCES utils/map.c token/tk_token.c lexer/lex_lexer.c repl/repl.h)
+set(SOURCES utils/map.c token/tk_token.c lexer/lex_lexer.c repl/repl.c)
 
 add_executable(${PROJECT_NAME} main.c ${lexer} ${token} ${map} ${repl})
 # enable_testing()
