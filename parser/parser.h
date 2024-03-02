@@ -1,11 +1,15 @@
 #pragma once
 #ifndef PARSER_H
 #define PARSER_H
-
 #endif // !PARSER_H
 #include "../ast/ast.h"
 #include "../lexer/lex_lexer.h"
 #include "../utils/map.h"
+#define MAX_PARSER_ERROR 10
+#define ERROR_MESSAGE_LENGTH 250
+#define MAX_STATEMENT 50
+#define FUNCTION_NAME_STRINGify(function) #function
+#define STRING_TO_FUNCTION(function) ((void (*)(void)) function)
 typedef ast_expression prefix_parse_fn(void);
 typedef ast_expression infix_parse_fn(ast_expression);
 
@@ -27,6 +31,7 @@ typedef struct parser {
   tk_token current_token;
   tk_token peek_token;
   char **errors;
+  unsigned char error_counts;
   hashmap *prefix_parse_fns;
   hashmap *infix_parse_fns;
 } parser;
