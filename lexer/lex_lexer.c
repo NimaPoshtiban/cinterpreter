@@ -134,12 +134,43 @@ tk_token lex_next_token(lex_lexer *lexer, hashmap *map) {
     token = lex_new_token(TK_SLASH, literal);
   } break;
   case '<': {
-    char literal[2] = {lexer->ch, '\0'};
-    token = lex_new_token(TK_LT, literal);
+      if (lex_peek_char(lexer) == '<') {
+          char ch = lexer->ch;
+          lex_read_char(lexer);
+          char literal[3] = { ch,lexer->ch,'\0' };
+          token = lex_new_token(TK_LSHIFT,literal);
+      }
+      else if (lex_peek_char(lexer)=='=')
+      {
+          char ch = lexer->ch;
+          lex_read_char(lexer);
+          char literal[3] = { ch,lexer->ch,'\0' };
+          token = lex_new_token(TK_LT_EQ, literal);
+      }
+      else {
+          char literal[2] = { lexer->ch, '\0' };
+          token = lex_new_token(TK_LT, literal);
+      }
   } break;
   case '>': {
-    char literal[2] = {lexer->ch, '\0'};
-    token = lex_new_token(TK_GT, literal);
+      if (lex_peek_char(lexer)=='>')
+      {
+          char ch = lexer->ch;
+          lex_read_char(lexer);
+          char literal[3] = {ch,lexer->ch,'\0' };
+          token = lex_new_token(TK_RSHIFT, literal);
+      }
+      else if (lex_peek_char(lexer)=='=')
+      {
+          char ch = lexer->ch;
+          lex_read_char(lexer);
+          char literal[3] = { ch,lexer->ch,'\0' };
+          token = lex_new_token(TK_GT_EQ, literal);
+      }
+      else {
+          char literal[2] = { lexer->ch, '\0' };
+          token = lex_new_token(TK_GT, literal);
+      }
   } break;
   case ';': {
     char literal[2] = {lexer->ch, '\0'};
