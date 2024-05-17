@@ -18,5 +18,8 @@ hashmap *tk_keywords(void) {
   hashmap_add(map, "if", TK_IF);
   hashmap_add(map, "else", TK_ELSE);
   hashmap_add(map, "return", TK_RETURN);
+  hashmap_add(map, "and", TK_LOGICAL_AND);
+  hashmap_add(map, "or", TK_LOGICAL_OR);
+  hashmap_add(map, "while", TK_WHILE);
   return map;
 }

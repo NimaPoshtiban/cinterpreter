@@ -16,12 +16,21 @@
 #define TK_BANG "!"
 #define TK_ASTERISK "*"
 #define TK_SLASH "/"
+#define TK_MODULO "%"
+#define TK_LSHIFT "<<"
+#define TK_RSHIFT ">>"
+
 
 #define TK_LT "<"
 #define TK_GT ">"
 
 #define TK_EQ "=="
 #define TK_NOT_EQ "!="
+#define TK_LT_EQ "<="
+#define TK_GT_EQ ">="
+
+#define TK_LOGICAL_AND "and"
+#define TK_LOGICAL_OR "or"
 // Delimiters
 #define TK_COMMA ","
 #define TK_SEMICOLON ";"
@@ -45,3 +54,4 @@
 #define TK_IF "if"
 #define TK_ELSE "else"
 #define TK_RETURN "return"
+#define TK_WHILE "while"

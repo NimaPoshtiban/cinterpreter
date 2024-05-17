@@ -1,3 +1,4 @@
+#pragma once
 #include "../utils/map.h"
 #ifndef tk_token_h
 #define tk_token_h
