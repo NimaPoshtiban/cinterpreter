@@ -12,13 +12,10 @@ typedef struct ast_node {
 
 typedef struct ast_expression {
   ast_node node;
-  void (*expression_node)(void *);
 } ast_expression;
 
 typedef struct ast_statement {
   ast_node node;
-  void (*statement_node)(void *);
-
 } ast_statement;
 
 typedef struct ast_program {
@@ -207,3 +204,42 @@ ast_if_expression ast_if_expression_init(tk_token token,
                                          ast_expression *condition,
                                          ast_block_statement *consequence,
                                          ast_block_statement *alternative);
+
+char *ast_while_expression_token_literal(ast_while_expression *expr);
+char *ast_while_expression_string(ast_while_expression *expr);
+ast_while_expression ast_while_expression_init(tk_token token,
+                                               ast_expression *condition,
+                                               ast_block_statement *body);
+char *ast_function_literal_token_literal(ast_function_literal *fn);
+char *ast_function_literal_string(ast_function_literal *fn);
+ast_function_literal ast_function_literal_init(tk_token token,
+                                               ast_identifier *parameters,
+                                               ast_block_statement *body);
+
+char *ast_call_expression_token_literal(ast_call_expression *expr);
+char *ast_call_expression_string(ast_call_expression *expr);
+ast_call_expression ast_call_expression_init(tk_token token,
+                                             ast_expression *function,
+                                             ast_expression *arguments);
+char *ast_string_literal_token_literal(ast_string_literal *li);
+char *ast_string_literal_string(ast_string_literal *li);
+ast_string_literal ast_string_literal_init(tk_token token, char *value);
+
+char *ast_array_literal_token_literal(ast_array_literal *li);
+char *ast_array_literal_string(ast_array_literal *li);
+ast_array_literal ast_array_literal_init(tk_token token,
+                                         ast_expression *elements);
+
+char *ast_hash_literal_token_literal(ast_hash_literal *hl);
+char *ast_hash_literal_string(ast_hash_literal *hl);
+ast_hash_literal ast_hash_literal_init(tk_token token, hashmap *pairs);
+
+// implement these functions
+char *ast_node_token_literal(void *expr);
+char *ast_node_string(void *expr);
+ast_expression ast_expression_init(void);
+ast_statement ast_statement_init(void);
+
+char *ast_program_token_literal(ast_program *program);
+char *ast_program_string(ast_program *program);
+ast_program ast_program_init(ast_statement *statements);

@@ -237,3 +237,158 @@ ast_if_expression ast_if_expression_init(tk_token token,
                             ast_if_expression_string};
   return expr;
 }
+
+char *ast_while_expression_token_literal(ast_while_expression *expr) {
+  return expr->token.literal;
+}
+
+char *ast_while_expression_string(ast_while_expression *expr) {
+  char *str = (char *)malloc(sizeof(char) * AST_MAX_BUFFER_SIZE);
+  strcat_s(str, sizeof(expr->token_literal(expr)), expr->token_literal(expr));
+  strcat_s(str, sizeof(char), "(");
+  strcat_s(str, sizeof(expr->condition->node.string(expr->condition)),
+           expr->condition->node.string(expr->condition));
+  strcat_s(str, sizeof(char), ")");
+  strcat_s(str, sizeof(expr->body->string(expr->body)),
+           expr->body->string(expr->body));
+  strcat_s(str, sizeof(char), "\0");
+  return str;
+}
+
+ast_while_expression ast_while_expression_init(tk_token token,
+                                               ast_expression *condition,
+                                               ast_block_statement *body) {
+  ast_while_expression expr = {token, condition, body,
+                               ast_while_expression_token_literal,
+                               ast_while_expression_string};
+  return expr;
+}
+
+char *ast_function_literal_token_literal(ast_function_literal *fn) {
+  return fn->token.literal;
+}
+
+char *ast_function_literal_string(ast_function_literal *fn) {
+  char *str = (char *)malloc(sizeof(char) * AST_MAX_BUFFER_SIZE);
+  char *params = (char *)malloc(sizeof(char));
+  int i = 0;
+  while (&fn->parameters[i] != NULL) {
+    params = (char *)realloc(
+        params,
+        sizeof(params) + sizeof(fn->parameters->string(&fn->parameters[i])));
+    strcpy_s(params, sizeof(fn->parameters->string(&fn->parameters[i])),
+             fn->parameters[i].string(&fn->parameters[i]));
+    i++;
+  }
+  strcat_s(str, sizeof(fn->token_literal(fn)), fn->token_literal(fn));
+  strcat_s(str, sizeof(char), "(");
+  strcat_s(str, sizeof(params), params);
+  strcat_s(str, sizeof(char), ")");
+  strcat_s(str, sizeof(fn->body->string(fn->body)), fn->body->string(fn->body));
+  strcat_s(str, sizeof(char), "\0");
+  return str;
+}
+
+ast_function_literal ast_function_literal_init(tk_token token,
+                                               ast_identifier *parameters,
+                                               ast_block_statement *body) {
+  ast_function_literal fn = {token, parameters, body,
+                             ast_function_literal_token_literal,
+                             ast_function_literal_string};
+  return fn;
+}
+
+char *ast_call_expression_token_literal(ast_call_expression *expr) {
+  return expr->token.literal;
+}
+
+char *ast_call_expression_string(ast_call_expression *expr) {
+  char *str = (char *)malloc(sizeof(char) * AST_MAX_BUFFER_SIZE);
+  char *args = (char *)malloc(sizeof(char));
+  int i = 0;
+  while (&expr->arguments[i] != NULL) {
+    args = (char *)realloc(
+        args, sizeof(args) +
+                  sizeof(expr->arguments->node.string(&expr->arguments[i])));
+    strcpy_s(args, sizeof(expr->arguments->node.string(&expr->arguments[i])),
+             expr->arguments[i].node.string(&expr->arguments[i]));
+    i++;
+  }
+  strcat_s(str, sizeof(expr->function->node.string(expr->function)),
+           expr->function->node.string(expr->function));
+  strcat_s(str, sizeof(char), "(");
+  strcat_s(str, sizeof(args), args);
+  strcat_s(str, sizeof(char), ")");
+  strcat_s(str, sizeof(char), "\0");
+  return str;
+}
+
+ast_call_expression ast_call_expression_init(tk_token token,
+                                             ast_expression *function,
+                                             ast_expression *arguments) {
+  ast_call_expression expr = {token, function, arguments,
+                              ast_call_expression_token_literal,
+                              ast_call_expression_string};
+  return expr;
+}
+
+char *ast_string_literal_token_literal(ast_string_literal *li) {
+  return li->token.literal;
+}
+
+char *ast_string_literal_string(ast_string_literal *li) {
+  return li->token.literal;
+}
+
+ast_string_literal ast_string_literal_init(tk_token token, char *value) {
+  ast_string_literal str = {token, value, ast_string_literal_token_literal,
+                            ast_string_literal_string};
+  return str;
+}
+
+char *ast_array_literal_token_literal(ast_array_literal *li) {
+  return li->token.literal;
+}
+
+char *ast_array_literal_string(ast_array_literal *li) {
+  char *str = (char *)malloc(sizeof(char) * AST_MAX_BUFFER_SIZE);
+  char *el = (char *)malloc(sizeof(char));
+  int i = 0;
+  while (&li->elements[i] != NULL) {
+    el = (char *)realloc(
+        el, sizeof(el) + sizeof(li->elements[i].node.string(&li->elements[i])));
+    strcpy_s(el, sizeof(li->elements[i].node.string(&li->elements[i])),
+             li->elements[i].node.string(&li->elements[i]));
+    i++;
+  }
+
+  strcat_s(str, sizeof(char), "[");
+  strcat_s(str, sizeof(el), el);
+  strcat_s(str, sizeof(char), "]");
+  strcat_s(str, sizeof(char), "\0");
+  return str;
+}
+
+ast_array_literal ast_array_literal_init(tk_token token,
+                                         ast_expression *elements) {
+  ast_array_literal arr = {token, elements, ast_array_literal_token_literal,
+                           ast_array_literal_string};
+  return arr;
+}
+
+char *ast_hash_literal_token_literal(ast_hash_literal *hl) {
+  return hl->token.literal;
+}
+
+// implemnent this
+// need to iterate over hashmap
+// hashmap only suppor CRUD operations
+char *ast_hash_literal_string(ast_hash_literal *hl) {
+  return hl->token.literal;
+}
+
+ast_hash_literal ast_hash_literal_init(tk_token token, hashmap *pairs) {
+  ast_hash_literal hash = {token, pairs, ast_hash_literal_token_literal,
+                           ast_hash_literal_string};
+  return hash;
+}
